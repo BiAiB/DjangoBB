@@ -14,9 +14,10 @@ from django.db.models.fields.related import SingleRelatedObjectDescriptor
 from django.db import models
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.serializers.json import DjangoJSONEncoder
-from django.utils import simplejson as json
+from django.utils import simplejson
 from django.conf import settings
-
+from django.core.serializers import json
+import django
 
 class AutoSingleRelatedObjectDescriptor(SingleRelatedObjectDescriptor):
     def __get__(self, instance, instance_type=None):
@@ -97,7 +98,7 @@ class JSONField(models.TextField):
 
         try:
             if isinstance(value, basestring):
-                return json.loads(value)
+                return simplejson.loads(value)
         except ValueError:
             pass
         return value
@@ -106,5 +107,8 @@ class JSONField(models.TextField):
         if value == "":
             return None
         if isinstance(value, dict):
-            value = json.dumps(value, cls=DjangoJSONEncoder)
+            if django.get_version() >= '1.5':
+                value = json.json.dumps(value, cls=DjangoJSONEncoder)
+            else:
+                value = simplejson.dumps(value, cls=DjangoJSONEncoder)
         return super(JSONField, self).get_prep_value(value)
