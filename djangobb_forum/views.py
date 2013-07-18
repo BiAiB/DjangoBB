@@ -66,6 +66,7 @@ def index(request, full=True):
                 'online_count': users_count,
                 'guest_count': guest_count,
                 'last_user': User.objects.latest('date_joined'),
+				'request': request
                 }
     if full:
         return render(request, 'djangobb_forum/index.html', to_return)
@@ -332,6 +333,7 @@ def show_forum(request, forum_id, full=True):
                 'posts': forum.post_count,
                 'topics': topics,
                 'moderator': moderator,
+				'request': request,
                 }
     if full:
         return render(request, 'djangobb_forum/forum.html', to_return)
@@ -440,6 +442,7 @@ def show_topic(request, topic_id, full=True):
                 'highlight_word': highlight_word,
                 'poll': poll,
                 'poll_form': poll_form,
+				'request': request,
                 })
     else:
         return render(request, 'djangobb_forum/lofi/topic.html', {'categories': Category.objects.all(),
